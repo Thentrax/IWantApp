@@ -1,5 +1,6 @@
 ﻿using IWantApp.Domain.Products;
 using IWantApp.Infra.Data;
+using Microsoft.Extensions.Primitives;
 
 namespace IWantApp.Endpoints.Categories;
 
@@ -12,6 +13,8 @@ public class CategoryPost
 
     public static IResult Action(CategoryRequest categoryRequest, ApplicationDbContext context)
     {
+        if (string.IsNullOrEmpty(categoryRequest.Name))
+            return Results.BadRequest("Name is Required");
         var category = new Category
         {
             Name = categoryRequest.Name,
