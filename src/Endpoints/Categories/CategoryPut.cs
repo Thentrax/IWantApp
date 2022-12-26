@@ -6,7 +6,7 @@ namespace IWantApp.Endpoints.Categories;
 
 public class CategoryPut
 {
-    public static string Template => "/categories/{id}";
+    public static string Template => "/categories/{id:guid}";
     public static string[] Methods => new string[] { HttpMethod.Put.ToString() };
     public static Delegate Handle => Action;
 
@@ -14,10 +14,15 @@ public class CategoryPut
     public static IResult Action([FromRoute]Guid Id,CategoryRequest categoryRequest, ApplicationDbContext context)
     {
         var category = context.Categories.Where(Categories=> Categories.Id == Id).FirstOrDefault();
-        category.Name = categoryRequest.Name;
-        category.Active = categoryRequest.Active;
-        category.UpdatedBy = "Editado";
-        category.UpdatedOn = DateTime.Now;
+
+        if (category == null)
+            return Results.NotFound();
+
+        category.EditInfo(categoryRequest.Name, categoryRequest.Active);
+
+        if(!category.IsValid)
+            return Results.NotFound();
+
 
         context.SaveChanges();
         return Results.Ok();

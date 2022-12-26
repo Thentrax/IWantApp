@@ -2,6 +2,7 @@
 
 namespace IWantApp.Domain;
 
+//Injetando o flunt na entidade base
 public abstract class Entity : Notifiable<Notification>
 {
     public Entity()
